@@ -1,6 +1,21 @@
 from pydantic import BaseModel
 from typing import List, Optional
 
+class ThemeParamBase(BaseModel):
+    name: str
+    type: str
+    default_value: Optional[str] = None
+
+class ThemeParamCreate(ThemeParamBase):
+    theme_id: int
+
+class ThemeParam(ThemeParamBase):
+    id: int
+    theme_id: int
+
+    class Config:
+        orm_mode = True
+
 class ThemeBase(BaseModel):
     name: str
 
@@ -9,6 +24,7 @@ class ThemeCreate(ThemeBase):
 
 class Theme(ThemeBase):
     id: int
+    params: List[ThemeParam] = []
 
     class Config:
         orm_mode = True
@@ -37,32 +53,15 @@ class MethodCreate(MethodBase):
 
 class Method(MethodBase):
     id: int
-    params: List[MethodParam] = []  # Добавляем параметры
+    params: List[MethodParam] = []
 
     class Config:
         orm_mode = True
 
-
-
 class SubtaskBase(BaseModel):
-    #id: int
     task_id: int
     method_id: int
     params: Optional[dict] = None
-
-class SubtaskCreate(SubtaskBase): 
-    pass
-
-class TaskBase(BaseModel):
-    name: str
-    description: str
-    theme_id: int
-    subtasks: List[SubtaskBase]
-
-class TaskCreate(TaskBase):
-    subtasks: List[SubtaskCreate]
-
-
 
 class SubtaskCreate(SubtaskBase):
     pass
@@ -73,8 +72,32 @@ class Subtask(SubtaskBase):
     class Config:
         orm_mode = True
 
+class TaskParamBase(BaseModel):
+    param_name: str
+    param_value: Optional[str] = None
+
+class TaskParamCreate(TaskParamBase):
+    task_id: int
+
+class TaskParam(TaskParamBase):
+    id: int
+    task_id: int
+
+    class Config:
+        orm_mode = True
+
+class TaskBase(BaseModel):
+    name: str
+    description: str
+    theme_id: int
+
+class TaskCreate(TaskBase):
+    pass
+
 class Task(TaskBase):
     id: int
-    subtasks: List[Subtask]
+    subtasks: List[Subtask] = []
+    params: List[TaskParam] = []
+
     class Config:
         orm_mode = True

@@ -105,3 +105,45 @@ def delete_subtask(db: Session, db_subtask: models.Subtask):
     db.delete(db_subtask)
     db.commit()
     return db_subtask
+
+
+def create_theme_param(db: Session, theme_param: schemas.ThemeParamCreate):
+    db_theme_param = models.ThemeParam(**theme_param.dict())
+    db.add(db_theme_param)
+    db.commit()
+    db.refresh(db_theme_param)
+    return db_theme_param
+
+def get_theme_params(db: Session, theme_id: int):
+    return db.query(models.ThemeParam).filter(models.ThemeParam.theme_id == theme_id).all()
+
+def get_theme_param(db: Session, theme_param_id: int):
+    return db.query(models.ThemeParam).filter(models.ThemeParam.id == theme_param_id).first()
+
+def delete_theme_param(db: Session, theme_param_id: int):
+    db_theme_param = db.query(models.ThemeParam).filter(models.ThemeParam.id == theme_param_id).first()
+    if db_theme_param:
+        db.delete(db_theme_param)
+        db.commit()
+    return db_theme_param
+
+# TaskParams CRUD
+def create_task_param(db: Session, task_param: schemas.TaskParamCreate):
+    db_task_param = models.TaskParam(**task_param.dict())
+    db.add(db_task_param)
+    db.commit()
+    db.refresh(db_task_param)
+    return db_task_param
+
+def get_task_params(db: Session, task_id: int):
+    return db.query(models.TaskParam).filter(models.TaskParam.task_id == task_id).all()
+
+def get_task_param(db: Session, task_param_id: int):
+    return db.query(models.TaskParam).filter(models.TaskParam.id == task_param_id).first()
+
+def delete_task_param(db: Session, task_param_id: int):
+    db_task_param = db.query(models.TaskParam).filter(models.TaskParam.id == task_param_id).first()
+    if db_task_param:
+        db.delete(db_task_param)
+        db.commit()
+    return db_task_param

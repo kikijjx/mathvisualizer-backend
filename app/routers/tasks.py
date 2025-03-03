@@ -38,3 +38,25 @@ def delete_task(task_id: int, db: Session = Depends(get_db)):
     if db_task is None:
         raise HTTPException(status_code=404, detail="Task not found")
     return crud.delete_task(db, db_task)
+
+
+
+
+
+@tasks_router.post("/task-params/", response_model=schemas.TaskParam)
+def create_task_param(task_param: schemas.TaskParamCreate, db: Session = Depends(get_db)):
+    return crud.create_task_param(db, task_param)
+
+@tasks_router.get("/task-params/{task_id}", response_model=List[schemas.TaskParam])
+def read_task_params(task_id: int, db: Session = Depends(get_db)):
+    task_params = crud.get_task_params(db, task_id)
+    if not task_params:
+        raise HTTPException(status_code=404, detail="Task params not found")
+    return task_params
+
+@tasks_router.delete("/task-params/{task_param_id}", response_model=schemas.TaskParam)
+def delete_task_param(task_param_id: int, db: Session = Depends(get_db)):
+    db_task_param = crud.delete_task_param(db, task_param_id)
+    if db_task_param is None:
+        raise HTTPException(status_code=404, detail="Task param not found")
+    return db_task_param
