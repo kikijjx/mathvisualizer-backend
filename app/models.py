@@ -47,6 +47,7 @@ class Task(Base):
     description = Column(String, index=True)
     subtasks = relationship("Subtask", back_populates="task", cascade="all, delete-orphan")
     params = relationship("TaskParam", back_populates="task", cascade="all, delete-orphan")
+    report_templates = relationship("ReportTemplate", back_populates="task", cascade="all, delete-orphan")
 
 class TaskParam(Base):
     __tablename__ = "task_params"
@@ -66,6 +67,13 @@ class Subtask(Base):
     task = relationship("Task", back_populates="subtasks")
     method = relationship("Method")
 
+class ReportTemplate(Base):
+    __tablename__ = "report_templates"
+    id = Column(Integer, primary_key=True, index=True)
+    task_id = Column(Integer, ForeignKey("tasks.id"), nullable=False)
+    name = Column(String, index=True)  # Название шаблона
+    content = Column(JSON, nullable=False)  # Содержимое шаблона (текст, таблицы, изображения)
 
+    task = relationship("Task", back_populates="report_templates")
 
     

@@ -1,5 +1,18 @@
 from pydantic import BaseModel
-from typing import List, Optional
+from typing import List, Optional, Union
+
+# Определяем вложенные структуры для content
+class TableData(BaseModel):
+    columns: List[str]
+    rows: List[List[str]]
+
+class ImageData(BaseModel):
+    url: str
+    alt: Optional[str] = None
+
+class ReportContent(BaseModel):
+    type: str  # "text", "table", "image"
+    value: Union[str, TableData, ImageData]  # Разные типы value
 
 class ThemeParamBase(BaseModel):
     name: str
@@ -94,10 +107,26 @@ class TaskBase(BaseModel):
 class TaskCreate(TaskBase):
     pass
 
+class ReportTemplateBase(BaseModel):
+    task_id: int
+    name: str
+    content: List[ReportContent]  # Теперь список ReportContent вместо dict
+
+class ReportTemplateCreate(ReportTemplateBase):
+    pass
+
+class ReportTemplate(ReportTemplateBase):
+    id: int
+
+    class Config:
+        orm_mode = True
+
+# Обновим Task, чтобы включить шаблоны отчётов
 class Task(TaskBase):
     id: int
     subtasks: List[Subtask] = []
     params: List[TaskParam] = []
+    report_templates: List[ReportTemplate] = []
 
     class Config:
         orm_mode = True

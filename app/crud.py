@@ -174,3 +174,46 @@ def delete_method_param(db: Session, db_param: models.MethodParam):
     db.delete(db_param)
     db.commit()
     return db_param
+
+
+def create_report_template(db: Session, report_template: schemas.ReportTemplateCreate):
+    # Преобразуем список ReportContent в список словарей
+    content_dict = [item.dict() for item in report_template.content]
+    
+    db_report_template = models.ReportTemplate(
+        task_id=report_template.task_id,
+        name=report_template.name,
+        content=content_dict  # Передаём сериализованный список
+    )
+    db.add(db_report_template)
+    db.commit()
+    db.refresh(db_report_template)
+    return db_report_template
+
+def get_report_template(db: Session, report_template_id: int):
+    return db.query(models.ReportTemplate).filter(models.ReportTemplate.id == report_template_id).first()
+
+def get_report_templates(db: Session, task_id: int, skip: int = 0, limit: int = 100):
+    return (
+        db.query(models.ReportTemplate)
+        .filter(models.ReportTemplate.task_id == task_id)
+        .offset(skip)
+        .limit(limit)
+        .all()
+    )
+
+def update_report_template(db: Session, db_report_template: models.ReportTemplate, report_template: schemas.ReportTemplateCreate):
+    # Преобразуем список ReportContent в список словарей
+    content_dict = [item.dict() for item in report_template.content]
+    
+    db_report_template.task_id = report_template.task_id
+    db_report_template.name = report_template.name
+    db_report_template.content = content_dict  # Обновляем content как список словарей
+    db.commit()
+    db.refresh(db_report_template)
+    return db_report_template
+
+def delete_report_template(db: Session, db_report_template: models.ReportTemplate):
+    db.delete(db_report_template)
+    db.commit()
+    return db_report_template
