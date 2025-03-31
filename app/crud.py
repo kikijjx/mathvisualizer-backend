@@ -15,6 +15,7 @@ def create_theme(db: Session, theme: schemas.ThemeCreate):
     db.refresh(db_theme)
     return db_theme
 
+
 def get_themes(db: Session, skip: int = 0, limit: int = 100):
     return db.query(models.Theme).offset(skip).limit(limit).all()
 
@@ -147,3 +148,29 @@ def delete_task_param(db: Session, task_param_id: int):
         db.delete(db_task_param)
         db.commit()
     return db_task_param
+
+
+def create_method_param(db: Session, method_param: schemas.MethodParamCreate):
+    db_method_param = models.MethodParam(**method_param.dict())
+    db.add(db_method_param)
+    db.commit()
+    db.refresh(db_method_param)
+    return db_method_param
+
+def get_method_params_by_method(db: Session, method_id: int):
+    return db.query(models.MethodParam).filter(models.MethodParam.method_id == method_id).all()
+
+def get_method_param(db: Session, param_id: int):
+    return db.query(models.MethodParam).filter(models.MethodParam.id == param_id).first()
+
+def update_method_param(db: Session, db_param: models.MethodParam, method_param: schemas.MethodParamCreate):
+    for key, value in method_param.dict().items():
+        setattr(db_param, key, value)
+    db.commit()
+    db.refresh(db_param)
+    return db_param
+
+def delete_method_param(db: Session, db_param: models.MethodParam):
+    db.delete(db_param)
+    db.commit()
+    return db_param
