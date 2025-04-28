@@ -7,12 +7,12 @@ class TableData(BaseModel):
     rows: List[List[str]]
 
 class ImageData(BaseModel):
-    url: str
+    data: str  # Base64-строка изображения
     alt: Optional[str] = None
 
 class ReportContent(BaseModel):
-    type: str  # "text", "table", "image"
-    value: Union[str, TableData, ImageData]  # Разные типы value
+    type: str
+    value: Union[str, TableData, ImageData]
 
 class ThemeParamBase(BaseModel):
     name: str
@@ -110,7 +110,7 @@ class TaskCreate(TaskBase):
 class ReportTemplateBase(BaseModel):
     task_id: int
     name: str
-    content: List[ReportContent]  # Теперь список ReportContent вместо dict
+    content: List[ReportContent]
 
 class ReportTemplateCreate(ReportTemplateBase):
     pass
